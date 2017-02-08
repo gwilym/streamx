@@ -2,18 +2,32 @@ FROM confluentinc/cp-kafka:3.1.2
 
 MAINTAINER pseluka@qubole.com
 
-RUN apt-get update && apt-get install -y vim
+ADD . $STREAMX_SRC_DIR
 
+ENV BUILD_PACKAGES="maven"
+ENV DEPENDENCY_PACKAGES="vim"
 ENV STREAMX_DIR /usr/local/streamx
+ENV STREAMX_SRC_DIR /usr/local/streamx-src
 
-ADD target/streamx-0.1.0-SNAPSHOT-development/share/java/streamx /usr/local/streamx
-ADD config /usr/local/streamx/config
-ADD docker/entry /usr/local/streamx/entry
-ADD docker/utils.py /usr/local/streamx/utils.py
+RUN apt-get clean && \
+	apt-get update && \
+	apt-get dist-upgrade -y && \
+	apt-get install -y $DEPENDENCY_PACKAGES $BUILD_PACKAGES && \
+	cd $STREAMX_SRC_DIR && \
+	mvn -DskipTests package && \
+	mkdir -p $STREAMX_DIR && \
+	mkdir -p $STREAMX_DIR/config && \
+	cp -r target/streamx-0.1.0-SNAPSHOT-development/share/java/streamx/* $STREAMX_DIR && \
+	cp -r config/* $STREAMX_DIR/config && \
+	cp -r docker/* $STREAMX_DIR && \
+	chmod 777 $STREAMX_DIR/entry && \
+	apt-get purge -y $BUILD_PACKAGES && \
+	apt-get autoremove -y && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8083
 
-ENV CLASSPATH=$CLASSPATH:/usr/local/streamx/*
+ENV CLASSPATH=$CLASSPATH:$STREAMX_DIR/*
 
-RUN chmod 777 /usr/local/streamx/entry
-CMD ["bash","/usr/local/streamx/entry"]
+CMD ["bash","$STREAMX_DIR/entry"]
