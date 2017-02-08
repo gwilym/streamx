@@ -29,4 +29,4 @@ EXPOSE 8083
 
 ENV CLASSPATH=$CLASSPATH:$STREAMX_DIR/*
 
-CMD ["bash","$STREAMX_DIR/entry"]
+CMD ["bash","${STREAMX_DIR}/entry"]
