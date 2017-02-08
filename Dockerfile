@@ -2,18 +2,18 @@ FROM confluentinc/cp-kafka:3.1.2
 
 MAINTAINER pseluka@qubole.com
 
-ADD . $STREAMX_SRC_DIR
-
 ENV BUILD_PACKAGES="maven"
 ENV DEPENDENCY_PACKAGES="vim"
 ENV STREAMX_DIR /usr/local/streamx
 ENV STREAMX_SRC_DIR /usr/local/streamx-src
 
+ADD . $STREAMX_SRC_DIR
+
 RUN apt-get clean && \
 	apt-get update && \
 	apt-get dist-upgrade -y && \
 	apt-get install -y $DEPENDENCY_PACKAGES $BUILD_PACKAGES && \
-	mkdir -p $STREAMX_DIR $STREAMX_SRC_DIR $STREAMX_DIR/config && \
+	mkdir -p $STREAMX_DIR $STREAMX_DIR/config && \
 	cd $STREAMX_SRC_DIR && \
 	mvn -DskipTests package && \
 	cp -r target/streamx-0.1.0-SNAPSHOT-development/share/java/streamx/* $STREAMX_DIR && \
