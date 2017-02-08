@@ -13,10 +13,9 @@ RUN apt-get clean && \
 	apt-get update && \
 	apt-get dist-upgrade -y && \
 	apt-get install -y $DEPENDENCY_PACKAGES $BUILD_PACKAGES && \
+	mkdir -p $STREAMX_DIR $STREAMX_SRC_DIR $STREAMX_DIR/config && \
 	cd $STREAMX_SRC_DIR && \
 	mvn -DskipTests package && \
-	mkdir -p $STREAMX_DIR && \
-	mkdir -p $STREAMX_DIR/config && \
 	cp -r target/streamx-0.1.0-SNAPSHOT-development/share/java/streamx/* $STREAMX_DIR && \
 	cp -r config/* $STREAMX_DIR/config && \
 	cp -r docker/* $STREAMX_DIR && \
