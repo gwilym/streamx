@@ -1,4 +1,4 @@
-FROM confluentinc/cp-kafka:3.0.0
+FROM confluentinc/cp-kafka:3.1.2
 
 MAINTAINER pseluka@qubole.com
 
